@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Renewal Call Checklist — رِواء</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+
+:root {
+  --purple: #653165;
+  --teal:   #00A4A6;
+  --pur-l:  #f3eaf3;
+  --teal-l: #e0f6f6;
+  --teal-d: #007e80;
+  --pur-d:  #4e2550;
+  --bg:     #f7f4f8;
+  --white:  #ffffff;
+  --gray:   #888;
+  --border: #e5dde8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: #2a1a2e; min-height: 100vh; direction: rtl; }
+
+.header {
+  background: var(--purple); color: #fff;
+  padding: 16px 24px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 3px solid var(--teal);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 12px rgba(101,49,101,.3);
+}
+.header-title { font-size: 16px; font-weight: 800; }
+.header-sub   { font-size: 11px; opacity: .65; margin-top: 2px; }
+.progress-ring { position: relative; width: 48px; height: 48px; }
+.progress-ring svg { transform: rotate(-90deg); }
+.progress-ring circle { fill: none; stroke-width: 4; }
+.ring-bg   { stroke: rgba(255,255,255,.2); }
+.ring-fill { stroke: var(--teal); stroke-linecap: round; transition: stroke-dashoffset .4s ease; }
+.ring-pct  { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; }
+
+.tabs {
+  display: flex; gap: 0; background: var(--pur-d);
+  padding: 0 16px; overflow-x: auto; scrollbar-width: none;
+  position: sticky; top: 73px; z-index: 99;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 10px 14px; font-size: 12px; font-weight: 600;
+  color: rgba(255,255,255,.55); cursor: pointer;
+  border-bottom: 3px solid transparent; white-space: nowrap;
+  transition: all .2s; font-family: 'Tajawal', sans-serif;
+  background: none; border-top: none; border-left: none; border-right: none;
+}
+.tab:hover { color: rgba(255,255,255,.85); }
+.tab.active { color: #fff; border-bottom-color: var(--teal); }
+
+.content { max-width: 680px; margin: 0 auto; padding: 20px 16px 100px; }
+.stage-panel { display: none; }
+.stage-panel.active { display: block; }
+
+.section { background: var(--white); border-radius: 14px; border: 1px solid var(--border); margin-bottom: 16px; overflow: hidden; }
+.section-head { padding: 11px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+.section-icon { font-size: 16px; }
+.section-title { font-size: 13px; font-weight: 700; color: var(--purple); flex: 1; }
+.section-badge { font-size: 10px; background: var(--teal-l); color: var(--teal-d); padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+
+.items { padding: 8px 12px; }
+.item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 6px; border-radius: 8px; cursor: pointer; transition: background .15s; user-select: none; }
+.item:hover { background: var(--pur-l); }
+.item.checked { opacity: .6; }
+.item.checked .item-text { text-decoration: line-through; color: var(--gray); }
+.checkbox { width: 20px; height: 20px; flex-shrink: 0; border-radius: 6px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: all .2s; background: #fff; }
+.item.checked .checkbox { background: var(--teal); border-color: var(--teal); }
+.checkbox::after { content: '✓'; font-size: 12px; color: #fff; opacity: 0; transition: opacity .15s; }
+.item.checked .checkbox::after { opacity: 1; }
+.item-text { font-size: 13px; line-height: 1.5; flex: 1; }
+.item-hint { font-size: 10.5px; color: var(--teal-d); margin-top: 2px; display: block; font-style: italic; }
+
+.after-call { background: var(--purple); border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; }
+.after-call-title { color: #fff; font-size: 13px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.after-items { display: flex; flex-direction: column; gap: 6px; }
+.after-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 10px; border-radius: 8px; cursor: pointer; background: rgba(255,255,255,.08); transition: background .15s; user-select: none; }
+.after-item:hover { background: rgba(255,255,255,.15); }
+.after-item.checked { opacity: .55; }
+.after-item.checked .after-text { text-decoration: line-through; }
+.after-checkbox { width: 20px; height: 20px; flex-shrink: 0; border-radius: 6px; border: 2px solid rgba(255,255,255,.4); display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: all .2s; }
+.after-item.checked .after-checkbox { background: var(--teal); border-color: var(--teal); }
+.after-checkbox::after { content: '✓'; font-size: 12px; color: #fff; opacity: 0; transition: opacity .15s; }
+.after-item.checked .after-checkbox::after { opacity: 1; }
+.after-text { font-size: 12.5px; color: rgba(255,255,255,.9); flex: 1; line-height: 1.5; }
+
+.reminders { padding: 10px 12px 12px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+.reminder { border-radius: 10px; padding: 9px 12px; font-size: 12px; font-weight: 600; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+.reminder.warn  { background: #fff8ec; color: #7a5000; border: 1px solid #f5d07a; }
+.reminder.info  { background: var(--teal-l); color: var(--teal-d); border: 1px solid #a0e0e0; }
+.reminder.alert { background: #fdf0f0; color: #8a1a1a; border: 1px solid #f5a0a0; }
+.reminder-icon  { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+/* Tags section */
+.tags-section { background: var(--white); border-radius: 14px; border: 1px solid var(--border); margin-bottom: 16px; overflow: hidden; }
+.tags-head { padding: 11px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); background: var(--pur-l); }
+.tags-head .section-title { color: var(--purple); }
+.tag-groups { padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; }
+.tag-group-label { font-size: 11px; font-weight: 700; color: var(--teal-d); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
+.tags-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all .2s; user-select: none; border: 1.5px solid transparent;
+}
+.tag.green  { background: #ecfdf5; color: #065f46; border-color: #a7f3d0; }
+.tag.yellow { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+.tag.red    { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+.tag.teal   { background: var(--teal-l); color: var(--teal-d); border-color: #a0e0e0; }
+.tag.blue   { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+.tag.purple { background: var(--pur-l); color: var(--purple); border-color: #d8b4d8; }
+.tag.selected { transform: scale(1.05); box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+.tag.green.selected  { background: #065f46; color: #fff; }
+.tag.yellow.selected { background: #92400e; color: #fff; }
+.tag.red.selected    { background: #991b1b; color: #fff; }
+.tag.teal.selected   { background: var(--teal-d); color: #fff; }
+.tag.blue.selected   { background: #1d4ed8; color: #fff; }
+.tag.purple.selected { background: var(--purple); color: #fff; }
+
+.tags-desc { font-size: 11.5px; color: var(--gray); padding: 0 16px 12px; font-style: italic; }
+
+.reset-btn { display: block; width: 100%; padding: 12px; background: var(--pur-l); border: 1.5px solid var(--border); border-radius: 10px; color: var(--purple); font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Tajawal', sans-serif; transition: background .2s; margin-top: 8px; }
+.reset-btn:hover { background: #e8d5e8; }
+
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--purple); color: #fff; padding: 10px 20px; border-radius: 24px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 16px rgba(0,0,0,.2); opacity: 0; transition: all .3s; pointer-events: none; white-space: nowrap; z-index: 999; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">📋 Renewal Call Checklist</div>
+    <div class="header-sub">رِواء — فريق التجديد</div>
+  </div>
+  <div class="progress-ring">
+    <svg width="48" height="48" viewBox="0 0 48 48">
+      <circle class="ring-bg" cx="24" cy="24" r="20"></circle>
+      <circle class="ring-fill" cx="24" cy="24" r="20" id="ringFill" stroke-dasharray="125.6" stroke-dashoffset="125.6"></circle>
+    </svg>
+    <div class="ring-pct" id="ringPct">0%</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('communication',this)">📞 التواصل</button>
+  <button class="tab" onclick="switchTab('proposal',this)">💰 العرض المالي</button>
+  <button class="tab" onclick="switchTab('renewed',this)">✅ تم التجديد</button>
+  <button class="tab" onclick="switchTab('lost',this)">❌ خسارة</button>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════════════════════════════
+     COMMUNICATION — التواصل الأولي
+══════════════════════════════════════════════ -->
+<div class="stage-panel active" id="panel-communication">
+
+  <div class="section">
+    <div class="section-head"><span class="section-icon">👋</span><span class="section-title">الافتتاحية</span><span class="section-badge">ثابت في كل مكالمة</span></div>
+    <div class="items">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">السلام والترحيب بالعميل باحترافية<span class="item-hint">«السلام عليكم، حياك الله»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">التأكد أن الوقت مناسب للعميل<span class="item-hint">«وقتك يسمح؟ الله يعافيك»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">التعريف بالنفس والدور<span class="item-hint">«معك [الاسم] من فريق التجديد في رِواء»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">ذكر سبب التواصل بوضوح<span class="item-hint">«تواصلت معك لأن اشتراكك ينتهي خلال [X أيام]»</span></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="section-icon">📞</span><span class="section-title">نقاط مكالمة التواصل الأولي</span></div>
+    <div class="items">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">راجع بيانات العميل في CRM قبل الاتصال<span class="item-hint">تاريخ الانتهاء، الباقة الحالية، عدد المستخدمين، الفروع</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">اسأل العميل عن الخصائص التي يستخدمها فعلاً<span class="item-hint">«وش الخصائص اللي تستخدمها يومياً في النظام؟»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">نبّه العميل على خصائص يستخدمها لم يذكرها<span class="item-hint">«لاحظت إنك تستخدم [كذا] — هذي مهمة لاشتراكك»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">تأكد من هوية صاحب القرار<span class="item-hint">«أنت المسؤول عن قرار التجديد؟ ولا في شخص ثاني يشاركك؟»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">اسأل عن مستوى رضاه عن الخدمة<span class="item-hint">«كيف تجربتك مع النظام؟ في شي ما عجبك؟»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">إذا في مشكلة تقنية معلقة — صعّدها أولاً قبل نقاش التجديد<span class="item-hint">لا تكمل في الباقة وعندهم مشكلة غير محلولة</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">حدد الخطوة التالية بوضوح قبل إغلاق المكالمة<span class="item-hint">إرسال عرض / تحديد موعد متابعة / رفع للإدارة</span></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="section-icon">✅</span><span class="section-title">الإغلاق</span><span class="section-badge">ثابت في كل مكالمة</span></div>
+    <div class="items">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">تلخيص ما تم الاتفاق عليه<span class="item-hint">«خلاصة كلامنا: بنرسلك عرض السعر ونتواصل يوم [كذا]»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">الإغلاق الاحترافي والشكر<span class="item-hint">«يعطيك العافية، في أمان الله»</span></div></div>
+    </div>
+  </div>
+
+  <div class="after-call">
+    <div class="after-call-title">⚡ بعد المكالمة — لا تنسى</div>
+    <div class="after-items">
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">سجّل ملاحظات المكالمة في CRM</span></div>
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">حدّث Sub Stage بناءً على نتيجة المكالمة</span></div>
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">أضف التاغات المناسبة على المكالمة 🏷️</span></div>
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">يحتاج موعد متابعة؟ <strong>لا تنسى التاسك 📅</strong></span></div>
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">يحتاج تصعيد؟ <strong>لا تنسى ترسل لمديرك 🔺</strong></span></div>
+    </div>
+  </div>
+
+  <div class="section"><div class="reminders">
+    <div class="reminder alert"><span class="reminder-icon">⚠️</span>ما رد العميل؟ تواصل مرة ثانية في اليوم التالي</div>
+    <div class="reminder warn"><span class="reminder-icon">💡</span>لا تذكر السعر في المكالمة الأولى إلا إذا سأل العميل — ركّز على فهم الاحتياج أولاً</div>
+    <div class="reminder info"><span class="reminder-icon">ℹ️</span>تواصل قبل ١٠ أيام من الانتهاء كحد أقصى — ٥ أيام هو الحد الأدنى</div>
+  </div></div>
+
+  <!-- TAGS -->
+  <div class="tags-section">
+    <div class="tags-head"><span class="section-icon">🏷️</span><span class="section-title">تاغات المكالمة</span><span class="section-badge">اختر ما ينطبق</span></div>
+    <div class="tags-desc">التاغات المقترحة التالية تُضاف على المكالمة أثناء التواصل مع العميل أو بعده مباشرةً، بهدف تسهيل تحليل المكالمات وتحديد أنماط الأداء.</div>
+    <div class="tag-groups">
+      <div>
+        <div class="tag-group-label">👤 موقف العميل</div>
+        <div class="tags-wrap">
+          <span class="tag green" onclick="toggleTag(this)">مهتم بالتجديد</span>
+          <span class="tag yellow" onclick="toggleTag(this)">يحتاج وقت للتفكير</span>
+          <span class="tag yellow" onclick="toggleTag(this)">ينتظر قرار الإدارة</span>
+          <span class="tag yellow" onclick="toggleTag(this)">يقارن مع منافس</span>
+          <span class="tag yellow" onclick="toggleTag(this)">غير راضٍ عن الخدمة</span>
+          <span class="tag red" onclick="toggleTag(this)">نشاطه مغلق / متوقف</span>
+          <span class="tag red" onclick="toggleTag(this)">لم يرد</span>
+        </div>
+      </div>
+      <div>
+        <div class="tag-group-label">⚠️ سبب التردد أو الرفض</div>
+        <div class="tags-wrap">
+          <span class="tag yellow" onclick="toggleTag(this)">السعر مرتفع</span>
+          <span class="tag yellow" onclick="toggleTag(this)">ميزة مفقودة</span>
+          <span class="tag yellow" onclick="toggleTag(this)">مشكلة تقنية معلقة</span>
+          <span class="tag yellow" onclick="toggleTag(this)">استخدام محدود</span>
+          <span class="tag yellow" onclick="toggleTag(this)">ميزانية محدودة</span>
+          <span class="tag yellow" onclick="toggleTag(this)">قرار إداري</span>
+        </div>
+      </div>
+      <div>
+        <div class="tag-group-label">☑️ إجراء الموظف</div>
+        <div class="tags-wrap">
+          <span class="tag teal" onclick="toggleTag(this)">أرسل عرض السعر</span>
+          <span class="tag teal" onclick="toggleTag(this)">طلب تمديد الخصم</span>
+          <span class="tag teal" onclick="toggleTag(this)">وعد بمتابعة</span>
+          <span class="tag red" onclick="toggleTag(this)">صعّد للمدير</span>
+          <span class="tag red" onclick="toggleTag(this)">وعود من المبيعات</span>
+          <span class="tag blue" onclick="toggleTag(this)">حوّل لدعم فني</span>
+        </div>
+      </div>
+      <div>
+        <div class="tag-group-label">📊 نتيجة المكالمة</div>
+        <div class="tags-wrap">
+          <span class="tag green" onclick="toggleTag(this)">تم الإغلاق</span>
+          <span class="tag blue" onclick="toggleTag(this)">متابعة مجدولة</span>
+          <span class="tag yellow" onclick="toggleTag(this)">في انتظار السداد</span>
+          <span class="tag red" onclick="toggleTag(this)">خسارة مؤكدة</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetPanel('communication')">🔄 إعادة تعيين</button>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PROPOSAL — العرض المالي
+══════════════════════════════════════════════ -->
+<div class="stage-panel" id="panel-proposal">
+
+  <div class="section">
+    <div class="section-head"><span class="section-icon">👋</span><span class="section-title">الافتتاحية</span><span class="section-badge">ثابت</span></div>
+    <div class="items">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">السلام والترحيب بالعميل باحترافية<span class="item-hint">«السلام عليكم، حياك الله»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">التأكد أن الوقت مناسب للعميل<span class="item-hint">«وقتك يسمح؟ الله يعافيك»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">التعريف بالنفس والدور<span class="item-hint">«معك [الاسم] من فريق التجديد في رِواء»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">ذكر سبب التواصل — متابعة على العرض<span class="item-hint">«تواصلت معك لأتابع على عرض السعر اللي أرسلناه»</span></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="section-icon">💰</span><span class="section-title">نقاط مكالمة العرض المالي</span></div>
+    <div class="items">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">تأكد من وصول العرض ومراجعته<span class="item-hint">«وصلك العرض؟ قدرت تشوفه؟»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">اسأل عن موقفه من العرض بشكل مباشر<span class="item-hint">«وش رأيك في العرض؟ السعر مناسب؟»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">إذا رُفع للإدارة — حدد موعد القرار<span class="item-hint">«متى المتوقع يجيك رد الإدارة؟ نحدد موعد متابعة»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">إذا طلب تعديل الباقة — حدد نوع التعديل قبل الموافقة<span class="item-hint">ترقية / تخفيض / تعديل مستخدمين — وثّقه في CRM</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">استخدم أسلوب الضغط المناسب للحالة<span class="item-hint">التخلي / الإغلاق / الضغط التصاعدي — حسب وضع العميل</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">لا تعد بخصم غير مصرح به<span class="item-hint">ارجع لمدير الفريق قبل أي وعد بتخفيض</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">حاول إغلاق الصفقة في هذه المكالمة<span class="item-hint">«نقدر نكمل الإجراءات الحين؟»</span></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="section-icon">⚡</span><span class="section-title">أساليب الضغط الثلاثة</span><span class="section-badge">استخدم الأنسب</span></div>
+    <div class="items">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">التخلي — Walk-away<span class="item-hint">«الخصم ينتهي بكرة — بكيفك شوف اللي يناسبك، إحنا حاضرين»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">الإغلاق — Closure<span class="item-hint">«لو انتهى هذا الخصم ما أقدر أعطيك إياه مرة ثانية»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">الضغط التصاعدي — Escalation Pressure<span class="item-hint">«ترى النظام رح يوقف — العميل: مدّد لي الخصم»</span></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="section-icon">✅</span><span class="section-title">الإغلاق</span><span class="section-badge">ثابت</span></div>
+    <div class="items">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">تلخيص ما تم الاتفاق عليه<span class="item-hint">«خلاصة: العرض كذا، والخطوة الجاية كذا»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">ضبط توقعات العميل — الخطوة القادمة / موعد الانتهاء<span class="item-hint">«اشتراكك ينتهي يوم [كذا]، ننتظر ردك قبلها»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">الإغلاق الاحترافي والشكر<span class="item-hint">«يعطيك العافية، في أمان الله»</span></div></div>
+    </div>
+  </div>
+
+  <div class="after-call">
+    <div class="after-call-title">⚡ بعد المكالمة — لا تنسى</div>
+    <div class="after-items">
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">سجّل ملاحظات المكالمة في CRM</span></div>
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">حدّث Sub Stage — Proposal Sent / Awaiting Decision / Negotiation</span></div>
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">أضف التاغات المناسبة على المكالمة 🏷️</span></div>
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">مكالمة الضغط قبل يومين — <strong>لا تنسى التاسك 📅</strong></span></div>
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">يحتاج تصعيد؟ <strong>لا تنسى ترسل لمديرك 🔺</strong></span></div>
+    </div>
+  </div>
+
+  <div class="section"><div class="reminders">
+    <div class="reminder alert"><span class="reminder-icon">⚠️</span>ما رد العميل؟ تواصل في اليوم التالي — لا تترك العرض بدون متابعة</div>
+    <div class="reminder warn"><span class="reminder-icon">💡</span>إذا العميل ذكر ميزانية محددة — سجّلها في CRM فوراً</div>
+    <div class="reminder alert"><span class="reminder-icon">⚠️</span>ذكر العميل وعداً من المبيعات؟ لا تؤكد ولا تنفي — صعّد لمديرك فوراً</div>
+  </div></div>
+
+  <!-- TAGS -->
+  <div class="tags-section">
+    <div class="tags-head"><span class="section-icon">🏷️</span><span class="section-title">تاغات المكالمة</span><span class="section-badge">اختر ما ينطبق</span></div>
+    <div class="tags-desc">التاغات المقترحة التالية تُضاف على المكالمة أثناء التواصل مع العميل أو بعده مباشرةً، بهدف تسهيل تحليل المكالمات وتحديد أنماط الأداء.</div>
+    <div class="tag-groups">
+      <div>
+        <div class="tag-group-label">👤 موقف العميل</div>
+        <div class="tags-wrap">
+          <span class="tag green" onclick="toggleTag(this)">مهتم بالتجديد</span>
+          <span class="tag yellow" onclick="toggleTag(this)">يحتاج وقت للتفكير</span>
+          <span class="tag yellow" onclick="toggleTag(this)">ينتظر قرار الإدارة</span>
+          <span class="tag yellow" onclick="toggleTag(this)">يقارن مع منافس</span>
+          <span class="tag yellow" onclick="toggleTag(this)">غير راضٍ عن الخدمة</span>
+          <span class="tag red" onclick="toggleTag(this)">لم يرد</span>
+        </div>
+      </div>
+      <div>
+        <div class="tag-group-label">⚠️ سبب التردد أو الرفض</div>
+        <div class="tags-wrap">
+          <span class="tag yellow" onclick="toggleTag(this)">السعر مرتفع</span>
+          <span class="tag yellow" onclick="toggleTag(this)">ميزة مفقودة</span>
+          <span class="tag yellow" onclick="toggleTag(this)">مشكلة تقنية معلقة</span>
+          <span class="tag yellow" onclick="toggleTag(this)">استخدام محدود</span>
+          <span class="tag yellow" onclick="toggleTag(this)">ميزانية محدودة</span>
+          <span class="tag yellow" onclick="toggleTag(this)">قرار إداري</span>
+        </div>
+      </div>
+      <div>
+        <div class="tag-group-label">☑️ إجراء الموظف</div>
+        <div class="tags-wrap">
+          <span class="tag teal" onclick="toggleTag(this)">أرسل عرض السعر</span>
+          <span class="tag teal" onclick="toggleTag(this)">طلب تمديد الخصم</span>
+          <span class="tag teal" onclick="toggleTag(this)">وعد بمتابعة</span>
+          <span class="tag red" onclick="toggleTag(this)">صعّد للمدير</span>
+          <span class="tag red" onclick="toggleTag(this)">وعود من المبيعات</span>
+          <span class="tag blue" onclick="toggleTag(this)">حوّل لدعم فني</span>
+        </div>
+      </div>
+      <div>
+        <div class="tag-group-label">📊 نتيجة المكالمة</div>
+        <div class="tags-wrap">
+          <span class="tag green" onclick="toggleTag(this)">تم الإغلاق</span>
+          <span class="tag blue" onclick="toggleTag(this)">متابعة مجدولة</span>
+          <span class="tag yellow" onclick="toggleTag(this)">في انتظار السداد</span>
+          <span class="tag red" onclick="toggleTag(this)">خسارة مؤكدة</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetPanel('proposal')">🔄 إعادة تعيين</button>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     RENEWED — تم التجديد
+══════════════════════════════════════════════ -->
+<div class="stage-panel" id="panel-renewed">
+
+  <div class="section">
+    <div class="section-head"><span class="section-icon">✅</span><span class="section-title">إجراءات إغلاق التجديد</span></div>
+    <div class="items">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">تأكد من اكتمال عملية الدفع قبل إغلاق الديل<span class="item-hint">الموافقة الشفهية لا تكفي — تأكد من الدفع الفعلي</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">حدّث الديل في CRM إلى Renew Done فوراً<span class="item-hint">لا تؤخر التحديث بعد تأكيد الدفع</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">أرسل تأكيداً للعميل بالتجديد<span class="item-hint">«تم تجديد اشتراكك بنجاح، يسعدنا استمرارك معنا»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">سجّل في CRM: الباقة المجددة، المبلغ، تاريخ الانتهاء الجديد<span class="item-hint">هذه المعلومات ضرورية للمتابعة المستقبلية</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">أغلق المكالمة باحترافية وشكر العميل<span class="item-hint">«يعطيك العافية، نراك دايماً بخير — في أمان الله»</span></div></div>
+    </div>
+  </div>
+
+  <div class="after-call">
+    <div class="after-call-title">⚡ بعد المكالمة — لا تنسى</div>
+    <div class="after-items">
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">حدّث الديل إلى Renew Done في CRM</span></div>
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">أضف التاغ: تم الإغلاق 🏷️</span></div>
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">سجّل أي معلومة مفيدة ذكرها العميل في ملاحظات CRM</span></div>
+    </div>
+  </div>
+
+  <div class="section"><div class="reminders">
+    <div class="reminder info"><span class="reminder-icon">💡</span>إذا كان هناك خصم تم تقديمه — تأكد أنه موثق ومصرح به من مدير الفريق</div>
+  </div></div>
+
+  <!-- TAGS -->
+  <div class="tags-section">
+    <div class="tags-head"><span class="section-icon">🏷️</span><span class="section-title">تاغات المكالمة</span><span class="section-badge">اختر ما ينطبق</span></div>
+    <div class="tags-desc">التاغات المقترحة التالية تُضاف على المكالمة أثناء التواصل مع العميل أو بعده مباشرةً، بهدف تسهيل تحليل المكالمات وتحديد أنماط الأداء.</div>
+    <div class="tag-groups">
+      <div>
+        <div class="tag-group-label">📊 نتيجة المكالمة</div>
+        <div class="tags-wrap">
+          <span class="tag green" onclick="toggleTag(this)">تم الإغلاق</span>
+          <span class="tag yellow" onclick="toggleTag(this)">في انتظار السداد</span>
+        </div>
+      </div>
+      <div>
+        <div class="tag-group-label">☑️ إجراء الموظف</div>
+        <div class="tags-wrap">
+          <span class="tag teal" onclick="toggleTag(this)">طلب تمديد الخصم</span>
+          <span class="tag red" onclick="toggleTag(this)">صعّد للمدير</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetPanel('renewed')">🔄 إعادة تعيين</button>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     LOST — خسارة
+══════════════════════════════════════════════ -->
+<div class="stage-panel" id="panel-lost">
+
+  <div class="section">
+    <div class="section-head"><span class="section-icon">👋</span><span class="section-title">الافتتاحية</span><span class="section-badge">ثابت</span></div>
+    <div class="items">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">السلام والترحيب بالعميل باحترافية<span class="item-hint">«السلام عليكم، حياك الله»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">التأكد أن الوقت مناسب للعميل<span class="item-hint">«وقتك يسمح؟ الله يعافيك»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">التعريف بالنفس والدور<span class="item-hint">«معك [الاسم] من فريق التجديد في رِواء»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">ذكر سبب التواصل بوضوح<span class="item-hint">«تواصلت معك بخصوص تجديد اشتراككم»</span></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="section-icon">❌</span><span class="section-title">إجراءات إغلاق الخسارة</span></div>
+    <div class="items">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">تأكد أنك جرّبت الأساليب الثلاثة قبل الإغلاق<span class="item-hint">التخلي / الإغلاق / الضغط التصاعدي</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">اسأل العميل عن سبب عدم التجديد بشكل مباشر ومحترم<span class="item-hint">«نبي نفهم عشان نتحسن — وش اللي خلاك ما تجدد؟»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">سجّل السبب الحقيقي في CRM — لا تكتب "السعر" إذا السبب منافس<span class="item-hint">الدقة في التوثيق مسؤولية تشغيلية</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">إذا ذكر منافساً — سجّل اسمه تحديداً في CRM<span class="item-hint">قيود / زوهو / دفترة / فودكس / غيره</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">أغلق المكالمة باحترافية — العميل اليوم ممكن يرجع غداً<span class="item-hint">«دايماً أهلاً وسهلاً — باب رِواء مفتوح»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">حدّث الديل إلى Lost في CRM مع توثيق السبب<span class="item-hint">لا تغلق الديل Lost بدون سبب موثق</span></div></div>
+    </div>
+  </div>
+
+  <div class="after-call">
+    <div class="after-call-title">⚡ بعد المكالمة — لا تنسى</div>
+    <div class="after-items">
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">حدّث الديل إلى Lost في CRM مع سبب الخسارة</span></div>
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">أضف التاغات المناسبة على المكالمة 🏷️</span></div>
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">يحتاج تصعيد؟ <strong>لا تنسى ترسل لمديرك 🔺</strong></span></div>
+    </div>
+  </div>
+
+  <div class="section"><div class="reminders">
+    <div class="reminder alert"><span class="reminder-icon">⚠️</span>إذا السبب مشكلة تقنية لم تُحل — صعّدها أولاً، قد تتحول الخسارة لتجديد</div>
+    <div class="reminder warn"><span class="reminder-icon">💡</span>توثيق السبب الحقيقي للخسارة إلزامي — البيانات الخاطئة تضر بالتحليل</div>
+  </div></div>
+
+  <!-- TAGS -->
+  <div class="tags-section">
+    <div class="tags-head"><span class="section-icon">🏷️</span><span class="section-title">تاغات المكالمة</span><span class="section-badge">اختر ما ينطبق</span></div>
+    <div class="tags-desc">التاغات المقترحة التالية تُضاف على المكالمة أثناء التواصل مع العميل أو بعده مباشرةً، بهدف تسهيل تحليل المكالمات وتحديد أنماط الأداء.</div>
+    <div class="tag-groups">
+      <div>
+        <div class="tag-group-label">⚠️ سبب الخسارة</div>
+        <div class="tags-wrap">
+          <span class="tag red" onclick="toggleTag(this)">السعر مرتفع</span>
+          <span class="tag red" onclick="toggleTag(this)">إغلاق النشاط</span>
+          <span class="tag red" onclick="toggleTag(this)">انتقل لمنافس</span>
+          <span class="tag red" onclick="toggleTag(this)">مشكلة تقنية غير محلولة</span>
+          <span class="tag red" onclick="toggleTag(this)">ميزة مفقودة</span>
+          <span class="tag red" onclick="toggleTag(this)">قرار إداري</span>
+          <span class="tag red" onclick="toggleTag(this)">ميزانية محدودة</span>
+          <span class="tag red" onclick="toggleTag(this)">استخدام محدود</span>
+        </div>
+      </div>
+      <div>
+        <div class="tag-group-label">☑️ إجراء الموظف</div>
+        <div class="tags-wrap">
+          <span class="tag red" onclick="toggleTag(this)">صعّد للمدير</span>
+          <span class="tag red" onclick="toggleTag(this)">وعود من المبيعات</span>
+          <span class="tag blue" onclick="toggleTag(this)">حوّل لدعم فني</span>
+        </div>
+      </div>
+      <div>
+        <div class="tag-group-label">📊 نتيجة المكالمة</div>
+        <div class="tags-wrap">
+          <span class="tag red" onclick="toggleTag(this)">خسارة مؤكدة</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetPanel('lost')">🔄 إعادة تعيين</button>
+</div>
+
+</div><!-- /content -->
+
+<div class="toast" id="toast"></div>
+
+<div style="text-align:center; padding: 24px 16px 32px; font-size: 11px; color: #999; border-top: 1px solid #e5dde8; margin-top: 8px; font-family: 'Tajawal', sans-serif;">
+  صادر عن قسم ضمان الجودة | Issued by the Quality Assurance Department<br>
+  Renewal Call Checklist — V1 — Q2-2026
+</div>
+
+<script>
+var currentPanel = 'communication';
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.stage-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+  currentPanel = id;
+  updateProgress();
+}
+
+function toggle(el) {
+  el.classList.toggle('checked');
+  updateProgress();
+}
+
+function toggleAfter(el) {
+  el.classList.toggle('checked');
+  updateProgress();
+}
+
+function toggleTag(el) {
+  el.classList.toggle('selected');
+}
+
+function updateProgress() {
+  var panel = document.getElementById('panel-' + currentPanel);
+  var all  = panel.querySelectorAll('.item, .after-item');
+  var done = panel.querySelectorAll('.item.checked, .after-item.checked');
+  var pct  = all.length ? Math.round(done.length / all.length * 100) : 0;
+  var circ = 2 * Math.PI * 20;
+  document.getElementById('ringFill').style.strokeDashoffset = circ - (pct / 100) * circ;
+  document.getElementById('ringPct').textContent = pct + '%';
+  if (pct === 100) showToast('✅ ممتاز! غطّيت كل النقاط');
+}
+
+function resetPanel(id) {
+  var panel = document.getElementById('panel-' + id);
+  panel.querySelectorAll('.item, .after-item').forEach(function(el){
+    el.classList.remove('checked');
+  });
+  panel.querySelectorAll('.tag').forEach(function(el){
+    el.classList.remove('selected');
+  });
+  updateProgress();
+  showToast('🔄 تم إعادة التعيين');
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+
+updateProgress();
+</script>
+</body>
+</html>
