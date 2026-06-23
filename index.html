@@ -513,6 +513,54 @@ body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: #2a1a2e
   <button class="reset-btn" onclick="resetPanel('lost')">🔄 إعادة تعيين</button>
 </div>
 
+<!-- ══════════════════════════════════════════════
+     MOHASEB — المحاسب الشخصي
+══════════════════════════════════════════════ -->
+<div class="stage-panel" id="panel-mohaseb">
+ 
+  <div class="section">
+    <div class="section-head"><span class="section-icon">🧾</span><span class="section-title">المحاسب الشخصي — Full Stack Accounting</span></div>
+    <div class="items">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">اسأل العميل: هل عندك محاسب حالياً؟<span class="item-hint">الإجابة تحدد المسار — لا يوجد / يوجد</span></div></div>
+    </div>
+  </div>
+ 
+  <div class="section">
+    <div class="section-head"><span class="section-icon">✗</span><span class="section-title">مسار: لا يوجد محاسب</span><span class="section-badge">اعرض الخدمة</span></div>
+    <div class="items">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">اعرض الخدمة بعد فهم احتياج العميل — اربطها بمشكلة ذكرها هو<span class="item-hint">لا تعرضها عشوائياً — الربط بالاحتياج هو المفتاح</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">وضّح دور المحاسب: إدخال الفواتير والمصروفات لضمان صافي ربح دقيق<span class="item-hint">«محاسب معتمد من رِواء يتولى المشتريات والمصروفات والضرائب والتقارير»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">قارن التكلفة براتب محاسب كامل — الاشتراك أقل بكثير<span class="item-hint">«تحصل على محاسب شخصي بجزء من تكلفة الراتب»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">أبرز أن صاحب النشاط هو المستفيد الأول — نتائج صحيحة 100%<span class="item-hint">«تعرف أداء مشروعك وتتخذ قراراتك بثقة»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">تحقق من إحساس العميل بالقيمة قبل إغلاق الموضوع<span class="item-hint">«وش رأيك في الخدمة؟ تبي أوضح لك أكثر؟»</span></div></div>
+    </div>
+  </div>
+ 
+  <div class="section">
+    <div class="section-head"><span class="section-icon">✓</span><span class="section-title">مسار: يوجد محاسب</span><span class="section-badge">تكمّل لا تنافس</span></div>
+    <div class="items">
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">لا تنافس محاسبه — الخدمة تكمّل شغله وتخفف عنه<span class="item-hint">«الخدمة مو بديل عن محاسبه — هي تساعده»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">وضّح أن كثرة المهام على المحاسب تسبب أخطاء في البيانات<span class="item-hint">«المحاسب المرهق يغلط — الخدمة تخفف عنه»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">شرح أن الخدمة تتولى الإدخال اليومي ويركّز المحاسب على التحليل<span class="item-hint">«الخدمة تدخل اليومي، ومحاسبه يركّز على التحليل والقرارات»</span></div></div>
+      <div class="item" onclick="toggle(this)"><div class="checkbox"></div><div class="item-text">تحقق من إحساس العميل بالقيمة قبل إغلاق الموضوع<span class="item-hint">«وش رأيك؟ تبي أوضح لك كيف تشتغلون مع بعض؟»</span></div></div>
+    </div>
+  </div>
+ 
+  <div class="after-call">
+    <div class="after-call-title">⚡ بعد المكالمة — لا تنسى</div>
+    <div class="after-items">
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">سجّل في CRM: مهتم بالمحاسب / غير مهتم / لديه محاسب</span></div>
+      <div class="after-item" onclick="toggleAfter(this)"><div class="after-checkbox"></div><span class="after-text">إذا مهتم — حدد خطوة واضحة للمتابعة على الخدمة 📅</span></div>
+    </div>
+  </div>
+ 
+  <div class="section"><div class="reminders">
+    <div class="reminder warn"><span class="reminder-icon">💡</span>لا تعرض الخدمة قبل فهم احتياج العميل — اربطها بمشكلة ذكرها هو في المكالمة</div>
+    <div class="reminder info"><span class="reminder-icon">ℹ️</span>«لا تضيع وقتك في المحاسبة والفواتير والضرائب — ركّز على تنمية مشروعك واترك الباقي علينا»</div>
+  </div></div>
+ 
+  <button class="reset-btn" onclick="resetPanel('mohaseb')">🔄 إعادة تعيين</button>
+</div>
 </div><!-- /content -->
 
 <div class="toast" id="toast"></div>
